@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- META TAG DEFINITIONS -->
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->  
+    <meta name="description" content="Don't forget to add a 1-2 sentence description here." />
+    <meta name="keywords" content="Don't forget to add 20-30 important keywords here." />
+
+    <!-- PAGE TITLE -->
+    <title>GTFS Transit Route Viewer</title>
+
+    <!-- STYLESHEET FILE REFERENCES -->
+    <link href="css/bootstrap-3.3.4.min.css" rel="stylesheet" />
+    <link href="css/bootstrap-datetimepicker-4.14.30.min.css" rel="stylesheet" />
+    <link href="css/main.css" rel="stylesheet" />
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div class="page-header">
+        <h1>GTFS Transit Route Viewer</h1>
+        <p class="lead">View GTFS data within Google Maps</p>
+      </div><!-- END Header -->
+      <div class="row">
+        <div class="col-md-3" id="sidebar">
+          <h2>Select Agency <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="bottom" data-content="Select an agency GTFS transit feed from the GTFS Exchange, external reference ZIP link, upload ZIP file, or preset agencies previously selected. Preloaded agencies on this machine in this browser will expire after 24 hours."><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></a></h2>
+            <p>Agency Preset:<br />
+              <select class="form-control" id="agency">
+                <option value="null">[ Select Preloaded GTFS ]</option>
+              </select>
+            </p>
+            <p>
+              <button class="btn btn-default" id="select-feed">Select Feed</button>
+              <button class="btn btn-default" id="select-zip">Upload GTFS</button>
+            </p>
+          <hr style="border: 1px solid #999999;" />
+          <h2>Select Route Info <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="bottom" data-content="Select a transit route and date/time to view the bus route on the adjacent map. The path of the next trip in the route following the date and time selected below will be displayed."><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></a></h2>
+            <p>Route ID:<br />
+              <select class="form-control" id="route" disabled>
+                <option value="NULL">[ Select Route ]</option>
+              </select>
+            </p>
+            <p>Route Date/Time:<br />
+              <div class="form-group">
+                <div class="input-group date" id="datetime">
+                    <input type="text" class="form-control" id="rtdatetime" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+              </div>
+            </p>
+            <p><button type="button" class="btn btn-primary" id="create-map" disabled=true>Create Map</button></p>
+            <p>
+              <a id="remuuid">remove uuid</a><br />
+              <span id="testout" style="color: #999999">--</span>
+            </p> <!-- TEMP TO REMOVE UUID FOR TESTING -->
+        </div>
+        <div class="col-md-6" id="gmap">
+          <img class="gmaploading" src="/img/map-loading.gif" />
+          <!--<h2>Map Not Loaded</h2>
+          <p>Please check internet connection!</p>-->
+        </div>
+        <div class="col-md-3" id="gtfs-output">
+          <h2>Agency Information:</h2>
+          <p><span id="agency-out">--</span></p>
+          <h2>Calendar Information:</h2>
+          <p><span id="calendar-out">--</span></p>
+          <h2>Route Information:</h2>
+          <p><span id="route-out">--</span></p>
+        </div>
+      </div><!-- END Main Content -->
+    </div><!-- END Container -->
+    <div id="footer">
+        Jon Kostyniuk &copy; 2015, Version 0.1a
+    </div>
+
+
+    <!-- Modal Dialogue HTML - GTFS Agency Feed Select -->
+    <div id="mAgency" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <!--<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>-->
+                    <h4 class="modal-title">Select Agency Feed</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Transit feeds from <a href="http://www.gtfs-data-exchange.com/" target="_blank">GTFS Exchange</a>:</p>
+                    <div class="list-menu" id="agency-data">
+                      <!-- Automatically populated from GTFS Exchange Transit Feed JSON -->
+                      <!-- Example: <div class="list-item" id="t1" onClick="listClick(this.id)">Junk</div> -->
+                    </div>
+                    <!-- OnClick, automatically update agency preview information -->
+                    <div><span id="aTotal" style="color: #ff0000">Total Agencies: --</span></div>
+                    <div>Agency Name: <span id="aName" style="color: #999999">--</span></div>
+                    <div>Location: <span id="aLocation" style="color: #999999">--</span></div>
+                    <div>Agency URL: <span id="aURL" style="color: #999999">--</span></div>
+                    <div>Feed URL: <span id="aFeed" style="color: #999999">--</span></div>
+                    <div>Status: <span id="aOfficial" style="color: #999999">--</span></div>
+                    <div>Feed Updated: <span id="aFeedLastUpdated" style="color: #999999">--</span></div>
+                    <p>Preloaded agencies expire after 24 hours and are not shared with other users.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" id="clear-agency" onClick="clearAgency()">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="load-agency" disabled=true>Load Agency</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Dialogue HTML - GTFS ZIP File Upload -->
+    <div id="mUploadZIP" class="modal fade" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="zipform">                
+                  <div class="modal-header">
+                      <h4 class="modal-title">Upload GTFS ZIP File</h4>
+                  </div>
+                  <div class="modal-body">
+                      <p>Upload a GTFS ZIP file via web URL reference or upload via dropzone below.</p>
+                      <div class="form-group">
+                        <input type="radio" name="ziptype" value="url">
+                        <label for="zipurl">Paste ZIP File URL Here:</label>
+                        <input type="url" class="form-control" id="zipurl" placeholder="e.g. http://mytransit.com/gtfs_data.zip">
+                      </div>
+                      <div class="form-group">
+                        <input type="radio" name="ziptype" value="file">
+                        <label for="zipfile">Select Local ZIP File Here:</label>
+                        <input type="file" id="zipfile">
+                        <p class="help-block">e.g. gtfs_data.zip</p>
+                      </div>
+                      <p>Preloaded agencies expire after 24 hours and are not shared with other users.</p>
+                  </div>
+                  <div class="modal-footer">
+                      <button type="reset" class="btn btn-default" id="upload-clear" onClick="clearUpload()">Cancel</button>
+                      <button type="button" class="btn btn-primary" id="upload-ZIP" disabled=true>Load ZIP</button>
+                  </div>
+                </form>             
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT FILE REFERENCES -->
+    <script src="js/jquery-1.11.2.min.js"></script>
+    <script src="js/bootstrap-3.3.4.min.js"></script>
+    <script src="js/moment-2.10.3.min.js"></script>
+    <script src="js/bootstrap-datetimepicker-4.14.30.min.js"></script>
+    <script src="http://www.google.com/jsapi"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+    <script src="js/spin-2.3.1.min.js"></script>
+    <!--<script src="js/jquery.validate-1.13.1.min.js"></script>-->
+    <script src="js/main.js"></script>
+
+    <!-- GOOGLE ANALYTICS SCRIPT: change UA-XXXXX-X to be your site's ID. -->
+    <script>
+      (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
+      function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
+      e=o.createElement(i);r=o.getElementsByTagName(i)[0];
+      e.src='http://www.google-analytics.com/analytics.js';
+      r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+      ga('create','UA-XXXXX-X');ga('send','pageview');
+    </script>  
+  </body>
+</html>

@@ -1,0 +1,182 @@
+/* ==========================================================================
+   BASE STYLES
+   ========================================================================== */
+
+/* CONTAINER ELEMENTS */
+html, body {
+    color: #224c00;
+    font-size: 1em;
+    line-height: 1.4em;
+    height: 100%;
+}
+
+.container-fluid {
+    height: 100%;
+    width: 100%;
+    background: #224c00;
+}
+
+
+/* PAGE HEADER ELEMENTS */
+.page-header {
+    height: 50px;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    border-bottom: 0;
+}
+.page-header h1 {
+    font-size: 1.1em;
+    margin-top: 10px;
+    color: #ffffff;
+}
+
+.lead {
+    font-size: 12px;
+    margin-bottom: 0px;
+    color: #ffffff;
+}
+
+
+/* PAGE BODY CLASS ELEMENTS */
+.row { /* Use to fill whole page */
+    position: absolute;
+    top: 70px; /* Header Height */
+    bottom: 20px; /* Footer Height */
+    width: 100%;
+}
+
+.col-md-2, .col-md-3, .col-md-6 {
+    height: 100%;
+}
+
+
+/* PAGE BODY ID ELEMENTS */
+#sidebar {
+    background: #eeeeee;
+    overflow-y: scroll;
+}
+#sidebar h2 {
+    font-size: 0.9em;
+}
+#sidebar p {
+    font-size: 0.8em;
+}
+
+#gmap {
+    background: #ffffff;
+    padding: 0;
+    margin: 0;
+    color: #ff0000;
+}
+#gmap h2 {
+    padding-left: 10px;
+    font-size: 0.9em;
+}
+#gmap p {
+    padding-left: 10px;
+    font-size: 0.8em;
+}
+
+#gtfs-output {
+    background: #eeeeee;
+    overflow-y: scroll;
+}
+#gtfs-output h2 {
+    font-size: 0.9em;
+}
+#gtfs-output p {
+    font-size: 0.8em;
+}
+
+#footer {
+    padding: 0;
+    margin: 0;
+    display: block;
+    color: #224c00;
+    background: #8abd5f;
+    position: absolute;
+    bottom: 0px;
+    height: 20px;
+    width: 100%;
+    text-align: center;
+    font-size: 0.7em;
+    line-height: 2.0em;
+    vertical-align: middle;
+}
+
+
+/* MODAL ELEMENTS */
+/*#mAgency {
+    width: 80%;
+    margin-left: 40%;
+}*/
+.modal-body {
+    font-size: 0.8em;
+}
+.modal-body p {
+    color: #666666;
+}
+/*
+#droparea{
+    min-height: 100px;
+    margin: 30px auto 0;
+    padding: 0 20px;
+    border: 2px dotted rgba(0, 82, 156, 0.8);
+}*/
+
+
+/* COMMON AND REUSED CLASSES */
+.list-menu {
+    overflow-y: scroll;
+    height: 150px !important;
+    border: 1px solid #dddddd;
+}
+
+.list-item {
+    display: block;
+    width: 100%;
+    background: #ffffff;
+}
+.list-item:hover {
+    background: #dddddd;
+}
+.list-item:active {
+    background: #0000ff;
+    color: #ffffff;
+}
+
+/* MISCELLANEOUS FLOAT/CLEAR CLASSES */
+.error { /* this calss represents error text */
+    color: #ff0000;
+}
+.error.valid { /* this calss represents error text */
+    color: #006400;
+}
+
+.fltrt {  /* this class can be used to float an element right in your page. The floated element must precede the element it should be next to on the page. */
+    float: right;
+    margin-left: 8px;
+}
+
+.fltlft { /* this class can be used to float an element left in your page. The floated element must precede the element it should be next to on the page. */
+    float: left;
+    margin-right: 8px;
+}
+
+.clearfloat { /* this class can be placed on a <br /> or empty div as the final element following the last floated div (within the #container) if the #footer is removed or taken out of the #container */
+    clear:both;
+    height:0;
+    font-size: 1px;
+    line-height: 0px;
+}
+
+/* GOOGLE MAP WINDOW STYLING */
+.gmapinfo {
+    color: #000000;
+}
+.gmaploading {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
